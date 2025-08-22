@@ -252,7 +252,6 @@ local function toggleESPDoors()
     end)
     table.insert(espThreads, thread)
 end)
-end)
 
 AddButton("Esp", "Esp Keys", function()
 local function toggleESPKeys()
@@ -284,7 +283,6 @@ local function toggleESPKeys()
     end)
     table.insert(espThreads, thread)
 end)
-end)
 
 AddButton("Esp", "Esp Lever", function()
 local function toggleESPLever()
@@ -315,7 +313,6 @@ local function toggleESPLever()
         end
     end)
     table.insert(espThreads, thread)
-end
 end)
 
 AddButton("Esp", "Esp Lock", function()
@@ -331,7 +328,6 @@ AddButton("Esp", "Esp Lock", function()
 
         wait(0.5)  -- Обновление каждые 0.5 секунд
     end
-end)
 end)
 
 
@@ -456,7 +452,6 @@ Players.PlayerAdded:Connect(function(plr)
         createESP(plr)
     end
 end)
-end)
 
 ------------------------------------------------
 
@@ -493,7 +488,6 @@ spawn(function()
         wait(1.5) -- пауза 1 секунда между телепортами
     end
     print("Автотелепорт завершён!")
-end)
 end)
 
 ------------------------------------------------
