@@ -313,7 +313,7 @@ local function toggleESPDoors()
         end
     end)
     table.insert(espThreads, thread)
-end
+end)
 end)
 
 AddButton("Esp", "Esp Keys", function()
@@ -345,7 +345,7 @@ local function toggleESPKeys()
         end
     end)
     table.insert(espThreads, thread)
-end
+end)
 end)
 
 AddButton("Esp", "Esp Lever", function()
