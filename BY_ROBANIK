@@ -285,120 +285,117 @@ end)
 end)
 
 AddButton("Esp", "Esp Doors", function()
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local function toggleESPDoors()
+    stopESPThreads()
+    local thread = game:GetService("RunService").Heartbeat:Connect(function()
+        for i = 0, 100 do
+            local doorPath = game:GetService("Workspace"):FindFirstChild("CurrentRooms")
+            if doorPath and doorPath:FindFirstChild(tostring(i)) and doorPath[tostring(i)]:FindFirstChild("Door") then
+                local door = doorPath[tostring(i)].Door
+                if not door:FindFirstChild("ESPLabel") then
+                    local billboardGui = Instance.new("BillboardGui")
+                    billboardGui.Name = "ESPLabel"
+                    billboardGui.Parent = door
+                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
+                    billboardGui.AlwaysOnTop = true
 
--- Создаём ScreenGui для ESP
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = PlayerGui
-
--- Таблица для ESP дверей
-local doorsESP = {}
-
--- Функция для создания ESP для двери
-local function createDoorESP(door, doorNumber)
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Size = UDim2.new(0, 150, 0, 50)
-    textLabel.BackgroundTransparency = 0.5
-    textLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    textLabel.TextColor3 = Color3.fromRGB(255,255,255)
-    textLabel.TextScaled = true
-    textLabel.Text = "Door | " .. doorNumber
-    textLabel.Parent = screenGui
-    return textLabel
-end
-
--- Функция для автообновления ESP дверей от 0 до 100
-local function updateDoors()
-    for i = 0, 100 do
-        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
-        if room and room:FindFirstChild("Door") then
-            local door = room.Door
-            if door:FindFirstChild("Door") and not doorsESP[door] then
-                doorsESP[door] = createDoorESP(door.Door, i)
+                    local label = Instance.new("TextLabel")
+                    label.Parent = billboardGui
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.Text = "Door / " .. i
+                    label.BackgroundTransparency = 1
+                    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+                    label.TextSize = 14
+                    label.TextStrokeTransparency = 0.8
+                    label.Font = Enum.Font.Gotham
+                end
             end
         end
-    end
+    end)
+    table.insert(espThreads, thread)
 end
-
--- Постоянное обновление ESP дверей
-RunService.RenderStepped:Connect(function()
-    updateDoors() -- автообновление новых дверей
-
-    for door, espLabel in pairs(doorsESP) do
-        if door and door.Parent then
-            local doorPos = door.Position
-            local screenPos, onScreen = workspace.CurrentCamera:WorldToScreenPoint(doorPos)
-            espLabel.Visible = onScreen
-            if onScreen then
-                espLabel.Position = UDim2.new(0, screenPos.X - 75, 0, screenPos.Y - 25)
-            end
-        end
-    end
-end)
 end)
 
 AddButton("Esp", "Esp Keys", function()
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local function toggleESPKeys()
+    stopESPThreads()
+    local thread = game:GetService("RunService").Heartbeat:Connect(function()
+        for i = 0, 100 do
+            local keyPath = game:GetService("Workspace"):FindFirstChild("CurrentRooms")
+            if keyPath and keyPath:FindFirstChild(tostring(i)) then
+                local keyHitbox = keyPath[tostring(i)]:FindFirstChild("Assets") and keyPath[tostring(i)].Assets:FindFirstChild("KeyObtain") and keyPath[tostring(i)].Assets.KeyObtain:FindFirstChild("Hitbox") and keyPath[tostring(i)].Assets.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
+                if keyHitbox and not keyHitbox:FindFirstChild("ESPLabel") then
+                    local billboardGui = Instance.new("BillboardGui")
+                    billboardGui.Name = "ESPLabel"
+                    billboardGui.Parent = keyHitbox
+                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
+                    billboardGui.AlwaysOnTop = true
 
--- Создаём ScreenGui для ESP
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = PlayerGui
-
--- Таблица для ESP ключей
-local keysESP = {}
-
--- Функция для создания ESP для ключа
-local function createKeyESP(key, keyNumber)
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Size = UDim2.new(0, 150, 0, 50)
-    textLabel.BackgroundTransparency = 0.5
-    textLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    textLabel.TextColor3 = Color3.fromRGB(255,255,0) -- жёлтый для ключей
-    textLabel.TextScaled = true
-    textLabel.Text = "Key | " .. keyNumber
-    textLabel.Parent = screenGui
-    return textLabel
-end
-
--- Функция для автообновления ESP ключей от 0 до 100
-local function updateKeys()
-    for i = 0, 100 do
-        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
-        if room then
-            local success, key = pcall(function()
-                return room.Assets.Dresser.DrawerContainer.KeyObtain.Hitbox.KeyHitbox
-            end)
-            if success and key and not keysESP[key] then
-                keysESP[key] = createKeyESP(key, i)
+                    local label = Instance.new("TextLabel")
+                    label.Parent = billboardGui
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.Text = "Key / " .. i
+                    label.BackgroundTransparency = 1
+                    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+                    label.TextSize = 14
+                    label.TextStrokeTransparency = 0.8
+                    label.Font = Enum.Font.Gotham
+                end
             end
         end
-    end
+    end)
+    table.insert(espThreads, thread)
 end
+end)
 
--- Постоянное обновление ESP ключей
-RunService.RenderStepped:Connect(function()
-    updateKeys() -- автообновление новых ключей
+AddButton("Esp", "Esp Lever", function()
+local function toggleESPLever()
+    stopESPThreads()
+    local thread = game:GetService("RunService").Heartbeat:Connect(function()
+        for i = 0, 100 do
+            local leverPath = game:GetService("Workspace"):FindFirstChild("CurrentRooms")
+            if leverPath and leverPath:FindFirstChild(tostring(i)) and leverPath[tostring(i)]:FindFirstChild("Assets") and leverPath[tostring(i)].Assets:FindFirstChild("LeverForGate") then
+                local lever = leverPath[tostring(i)].Assets.LeverForGate.Main
+                if not lever:FindFirstChild("ESPLabel") then
+                    local billboardGui = Instance.new("BillboardGui")
+                    billboardGui.Name = "ESPLabel"
+                    billboardGui.Parent = lever
+                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
+                    billboardGui.AlwaysOnTop = true
 
-    for key, espLabel in pairs(keysESP) do
-        if key and key.Parent then
-            local keyPos = key.Position
-            local screenPos, onScreen = workspace.CurrentCamera:WorldToScreenPoint(keyPos)
-            espLabel.Visible = onScreen
-            if onScreen then
-                espLabel.Position = UDim2.new(0, screenPos.X - 75, 0, screenPos.Y - 25)
+                    local label = Instance.new("TextLabel")
+                    label.Parent = billboardGui
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.Text = "Lever / " .. i
+                    label.BackgroundTransparency = 1
+                    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+                    label.TextSize = 14
+                    label.TextStrokeTransparency = 0.8
+                    label.Font = Enum.Font.Gotham
+                end
             end
         end
+    end)
+    table.insert(espThreads, thread)
+end
+end)
+
+AddButton("Esp", "Esp Lock", function()
+-- Обводка замков дверей
+        if espLocksEnabled then
+            for i = 0, 100 do
+                local room = game:GetService("Workspace").CurrentRooms:FindFirstChild(tostring(i))
+                if room and room:FindFirstChild("Door") and room.Door:FindFirstChild("Lock") then
+                    createESP(room.Door.Lock, "lock / " .. i)
+                end
+            end
+        end
+
+        wait(0.5)  -- Обновление каждые 0.5 секунд
     end
 end)
 end)
+
 
 AddButton("Esp", "Esp Players", function()
 local Players = game:GetService("Players")
@@ -523,65 +520,6 @@ Players.PlayerAdded:Connect(function(plr)
 end)
 end)
 
-AddButton("Esp", "closet", function()
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
--- Создаём ScreenGui для ESP
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = PlayerGui
-
--- Таблица для ESP шкафов
-local closetsESP = {}
-
--- Функция для создания ESP для шкафа
-local function createClosetESP(closet, closetNumber)
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Size = UDim2.new(0, 180, 0, 50)
-    textLabel.BackgroundTransparency = 0.5
-    textLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    textLabel.TextColor3 = Color3.fromRGB(0,255,255) -- голубой для шкафов
-    textLabel.TextScaled = true
-    textLabel.Text = "Closet | " .. closetNumber
-    textLabel.Parent = screenGui
-    return textLabel
-end
-
--- Функция для автообновления ESP шкафов от 0 до 1000
-local function updateClosets()
-    for i = 0, 1000 do
-        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
-        if room then
-            local success, closet = pcall(function()
-                return room.Assets.Wardrobe.Main
-            end)
-            if success and closet and not closetsESP[closet] then
-                closetsESP[closet] = createClosetESP(closet, i)
-            end
-        end
-    end
-end
-
--- Постоянное обновление ESP шкафов
-RunService.RenderStepped:Connect(function()
-    updateClosets() -- автообновление новых шкафов
-
-    for closet, espLabel in pairs(closetsESP) do
-        if closet and closet.Parent then
-            local closetPos = closet.Position
-            local screenPos, onScreen = workspace.CurrentCamera:WorldToScreenPoint(closetPos)
-            espLabel.Visible = onScreen
-            if onScreen then
-                espLabel.Position = UDim2.new(0, screenPos.X - 90, 0, screenPos.Y - 25)
-            end
-        end
-    end
-end)
-end)
-
 ------------------------------------------------
 
 AddButton("Afk", "Afk Doors Teleport", function()
@@ -614,7 +552,7 @@ spawn(function()
         else
             print("Дверь " .. i .. " не найдена")
         end
-        wait(1) -- пауза 1 секунда между телепортами
+        wait(1.5) -- пауза 1 секунда между телепортами
     end
     print("Автотелепорт завершён!")
 end)
@@ -626,4 +564,10 @@ AddButton("Credit", "CREDIT", function()
 end)
 
 AddButton("Credit", "ROBANIK", function()
+end)
+
+AddButton("Credit", "AND", function()
+end)
+
+AddButton("Credit", "SOMBRITA_GAMESYT", function()
 end)
