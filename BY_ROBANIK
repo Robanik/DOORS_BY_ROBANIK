@@ -591,3 +591,39 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+-- Функция для телепортации к двери
+local function teleportToDoor(doorNumber)
+    local room = Workspace.CurrentRooms:FindFirstChild(tostring(doorNumber))
+    if room and room:FindFirstChild("Door") then
+        local door = room.Door
+        if door:FindFirstChild("Door") then
+            HumanoidRootPart.CFrame = door.Door.CFrame + Vector3.new(0, 5, 0) -- телепорт чуть выше двери
+            return true
+        end
+    end
+    return false
+end
+
+-- Автотелепорт от 0 до 100 дверей
+spawn(function()
+    for i = 0, 100 do
+        local success = teleportToDoor(i)
+        if success then
+            print("Телепорт к двери " .. i)
+        else
+            print("Дверь " .. i .. " не найдена")
+        end
+        wait(1) -- пауза 1 секунда между телепортами
+    end
+    print("Автотелепорт завершён!")
+end)
+end)
+
+------------------------------------------------
+
+AddButton("Credit", "CREDIT", function()
+end)
+
+AddButton("Credit", "ROBANIK", function()
+end)
