@@ -3,7 +3,11 @@ local BUTTON_IMAGE_ID = "rbxassetid://107781958606208"
 
 -- 🔑 Ключи (можно добавить несколько)
 local VALID_KEYS = {
-    "DOORSIUSRR",
+    "DorsiusRR",
+    "DORSIUSRR",
+    "DoorsiusRR ",
+    " DoorsiusRR",
+    " DoorsiusRR ",
 }
 
 -- 🔗 Ссылка на получение ключа
@@ -78,7 +82,7 @@ HeaderLabel.BackgroundTransparency = 1
 HeaderLabel.TextColor3 = Color3.fromRGB(255,255,255)
 HeaderLabel.Font = Enum.Font.GothamBold
 HeaderLabel.TextSize = 16
-HeaderLabel.Text = "BY ROBANIK | DOORS"
+HeaderLabel.Text = "Создатель: Ты | Для игры: ExampleGame"
 
 -- Вкладки
 local TabScroll = Instance.new("ScrollingFrame")
@@ -204,132 +208,250 @@ end)
 AddTab("Home")
 AddTab("Player")
 AddTab("Esp")
-AddTab("Afk")
 AddTab("Credit")
 
 ------------------------------------------------
 
-AddButton("Home", "Hello, Thanks For Using Script", function()
+AddButton("Home", "Hello World, LOL", function()
 end)
 
 ------------------------------------------------
 
-AddButton("Player", "WalkSpeed 50", function()
+AddButton("Player", "SpeedWalk 30", function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid.WalkSpeed = 30
 end)
 
-AddButton("Player", "WalkSpeed 16", function()
+AddButton("Player", "SpeedWalk 16", function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid.WalkSpeed = 16
 end)
 
 ------------------------------------------------
+
+AddButton("Esp", "Esp Closet", function()
+-- // СТИЛЬНЫЙ ESP ДЛЯ GARDRОBE
+-- Автор: твой скриптер 😎
+
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local camera = Workspace.CurrentCamera
+
+-- Создаем ESP текст
+local function createBillboard(object, text)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = object
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel")
+    label.Parent = billboard
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(0, 255, 255)
+    label.TextStrokeTransparency = 0.2
+    label.TextSize = 18
+    label.Font = Enum.Font.FredokaOne -- красивый шрифт
+
+    billboard.Parent = object
+end
+
+-- Функция для проверки всех комнат
+local function setupESP()
+    for i = 0, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room and room:FindFirstChild("Assets") then
+            local assets = room.Assets
+            if assets:FindFirstChild("Wardrobe") then
+                local wardrobe = assets.Wardrobe:FindFirstChild("Main")
+                if wardrobe and not wardrobe:FindFirstChild("BillboardGui") then
+                    createBillboard(wardrobe, "(Closet | " .. i .. ")")
+                end
+            end
+        end
+    end
+end
+
+-- Обновление каждые 3 секунды
+task.spawn(function()
+    while task.wait(1) do
+        setupESP()
+    end
+end)
+end)
 
 AddButton("Esp", "Esp Doors", function()
-local function toggleESPDoors()
-    stopESPThreads()
-    local thread = game:GetService("RunService").Heartbeat:Connect(function()
-        for i = 0, 100 do
-            local doorPath = game:GetService("Workspace"):FindFirstChild("CurrentRooms")
-            if doorPath and doorPath:FindFirstChild(tostring(i)) and doorPath[tostring(i)]:FindFirstChild("Door") then
-                local door = doorPath[tostring(i)].Door
-                if not door:FindFirstChild("ESPLabel") then
-                    local billboardGui = Instance.new("BillboardGui")
-                    billboardGui.Name = "ESPLabel"
-                    billboardGui.Parent = door
-                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
-                    billboardGui.AlwaysOnTop = true
+-- // СТИЛЬНЫЙ ESP ДЛЯ ДВЕРЕЙ
+-- Автор: твой скриптер 😎
 
-                    local label = Instance.new("TextLabel")
-                    label.Parent = billboardGui
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.Text = "Door / " .. i
-                    label.BackgroundTransparency = 1
-                    label.TextColor3 = Color3.fromRGB(255, 0, 0)
-                    label.TextSize = 14
-                    label.TextStrokeTransparency = 0.8
-                    label.Font = Enum.Font.Gotham
-                end
+local Workspace = game:GetService("Workspace")
+
+-- Создаем ESP текст
+local function createBillboard(object, text)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = object
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 4, 0)
+    billboard.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel")
+    label.Parent = billboard
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 170, 0) -- оранжевый (как свет у двери)
+    label.TextStrokeTransparency = 0.2
+    label.TextSize = 20
+    label.Font = Enum.Font.FredokaOne -- стильный шрифт
+
+    billboard.Parent = object
+end
+
+-- Функция для проверки дверей
+local function setupDoorESP()
+    for i = 0, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room and room:FindFirstChild("Door") then
+            local doorModel = room.Door:FindFirstChild("Door")
+            if doorModel and not doorModel:FindFirstChild("BillboardGui") then
+                createBillboard(doorModel, "(Door | " .. i .. ")")
             end
         end
-    end)
-    table.insert(espThreads, thread)
+    end
+end
+
+-- Обновление каждые 3 секунды
+task.spawn(function()
+    while task.wait(1) do
+        setupDoorESP()
+    end
+end)
 end)
 
-AddButton("Esp", "Esp Keys", function()
-local function toggleESPKeys()
-    stopESPThreads()
-    local thread = game:GetService("RunService").Heartbeat:Connect(function()
-        for i = 0, 100 do
-            local keyPath = game:GetService("Workspace"):FindFirstChild("CurrentRooms")
-            if keyPath and keyPath:FindFirstChild(tostring(i)) then
-                local keyHitbox = keyPath[tostring(i)]:FindFirstChild("Assets") and keyPath[tostring(i)].Assets:FindFirstChild("KeyObtain") and keyPath[tostring(i)].Assets.KeyObtain:FindFirstChild("Hitbox") and keyPath[tostring(i)].Assets.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
-                if keyHitbox and not keyHitbox:FindFirstChild("ESPLabel") then
-                    local billboardGui = Instance.new("BillboardGui")
-                    billboardGui.Name = "ESPLabel"
-                    billboardGui.Parent = keyHitbox
-                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
-                    billboardGui.AlwaysOnTop = true
+AddButton("Esp", "Esp Key", function()
+-- // СТИЛЬНЫЙ ESP ДЛЯ KEY (оба варианта)
+-- Автор: твой скриптер 😎
 
-                    local label = Instance.new("TextLabel")
-                    label.Parent = billboardGui
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.Text = "Key / " .. i
-                    label.BackgroundTransparency = 1
-                    label.TextColor3 = Color3.fromRGB(255, 0, 0)
-                    label.TextSize = 14
-                    label.TextStrokeTransparency = 0.8
-                    label.Font = Enum.Font.Gotham
+local Workspace = game:GetService("Workspace")
+
+-- Функция для создания ESP
+local function createBillboard(object, text)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = object
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+    billboard.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel")
+    label.Parent = billboard
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(0, 255, 0) -- зеленый (ключ)
+    label.TextStrokeTransparency = 0.2
+    label.TextSize = 20
+    label.Font = Enum.Font.FredokaOne
+
+    billboard.Parent = object
+end
+
+-- Проверка комнат
+local function setupKeyESP()
+    for i = 0, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room and room:FindFirstChild("Assets") then
+            local assets = room.Assets
+
+            -- ✅ Вариант 1: Ключ в DrawerContainer
+            local drawer = assets:FindFirstChild("Table") and assets.Table:FindFirstChild("DrawerContainer")
+            if drawer and drawer:FindFirstChild("KeyObtain") then
+                local keyHitbox = drawer.KeyObtain:FindFirstChild("Hitbox") and drawer.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
+                if keyHitbox and not keyHitbox:FindFirstChild("BillboardGui") then
+                    createBillboard(keyHitbox, "(Key | " .. i .. ")")
+                end
+            end
+
+            -- ✅ Вариант 2: Ключ прямо на столе
+            local tableObj = assets:FindFirstChild("Table")
+            if tableObj and tableObj:FindFirstChild("KeyObtain") then
+                local keyHitbox2 = tableObj.KeyObtain:FindFirstChild("Hitbox") and tableObj.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
+                if keyHitbox2 and not keyHitbox2:FindFirstChild("BillboardGui") then
+                    createBillboard(keyHitbox2, "(Key | " .. i .. ")")
                 end
             end
         end
-    end)
-    table.insert(espThreads, thread)
+    end
+end
+
+-- Обновление каждые 3 секунды
+task.spawn(function()
+    while task.wait(1) do
+        setupKeyESP()
+    end
 end)
-
-AddButton("Esp", "Esp Lever", function()
-local function toggleESPLever()
-    stopESPThreads()
-    local thread = game:GetService("RunService").Heartbeat:Connect(function()
-        for i = 0, 100 do
-            local leverPath = game:GetService("Workspace"):FindFirstChild("CurrentRooms")
-            if leverPath and leverPath:FindFirstChild(tostring(i)) and leverPath[tostring(i)]:FindFirstChild("Assets") and leverPath[tostring(i)].Assets:FindFirstChild("LeverForGate") then
-                local lever = leverPath[tostring(i)].Assets.LeverForGate.Main
-                if not lever:FindFirstChild("ESPLabel") then
-                    local billboardGui = Instance.new("BillboardGui")
-                    billboardGui.Name = "ESPLabel"
-                    billboardGui.Parent = lever
-                    billboardGui.Size = UDim2.new(0, 100, 0, 50)
-                    billboardGui.AlwaysOnTop = true
-
-                    local label = Instance.new("TextLabel")
-                    label.Parent = billboardGui
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.Text = "Lever / " .. i
-                    label.BackgroundTransparency = 1
-                    label.TextColor3 = Color3.fromRGB(255, 0, 0)
-                    label.TextSize = 14
-                    label.TextStrokeTransparency = 0.8
-                    label.Font = Enum.Font.Gotham
-                end
-            end
-        end
-    end)
-    table.insert(espThreads, thread)
 end)
 
 AddButton("Esp", "Esp Lock", function()
--- Обводка замков дверей
-        if espLocksEnabled then
-            for i = 0, 100 do
-                local room = game:GetService("Workspace").CurrentRooms:FindFirstChild(tostring(i))
-                if room and room:FindFirstChild("Door") and room.Door:FindFirstChild("Lock") then
-                    createESP(room.Door.Lock, "lock / " .. i)
+-- // СТИЛЬНЫЙ ESP ДЛЯ LOCK
+-- Автор: твой скриптер 😎
+
+local Workspace = game:GetService("Workspace")
+
+-- Функция для создания ESP
+local function createBillboard(object, text)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = object
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel")
+    label.Parent = billboard
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 50, 50) -- красный (под замок)
+    label.TextStrokeTransparency = 0.2
+    label.TextSize = 20
+    label.Font = Enum.Font.FredokaOne
+
+    billboard.Parent = object
+end
+
+-- Проверка всех комнат
+local function setupLockESP()
+    for i = 0, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room and room:FindFirstChild("Door") then
+            local door = room.Door
+            if door:FindFirstChild("Lock") then
+                local lock = door.Lock
+                if lock and not lock:FindFirstChild("BillboardGui") then
+                    createBillboard(lock, "(Lock | " .. i .. ")")
                 end
             end
         end
+    end
+end
 
-        wait(0.5)  -- Обновление каждые 0.5 секунд
+-- Обновление каждые 3 секунды
+task.spawn(function()
+    while task.wait(1) do
+        setupLockESP()
     end
 end)
-
+end)
 
 AddButton("Esp", "Esp Players", function()
 local Players = game:GetService("Players")
@@ -452,42 +574,6 @@ Players.PlayerAdded:Connect(function(plr)
         createESP(plr)
     end
 end)
-
-------------------------------------------------
-
-AddButton("Afk", "Afk Doors Teleport", function()
-local Workspace = game:GetService("Workspace")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-
--- Функция для телепортации к двери
-local function teleportToDoor(doorNumber)
-    local room = Workspace.CurrentRooms:FindFirstChild(tostring(doorNumber))
-    if room and room:FindFirstChild("Door") then
-        local door = room.Door
-        if door:FindFirstChild("Door") then
-            HumanoidRootPart.CFrame = door.Door.CFrame + Vector3.new(0, 5, 0) -- телепорт чуть выше двери
-            return true
-        end
-    end
-    return false
-end
-
--- Автотелепорт от 0 до 100 дверей
-spawn(function()
-    for i = 0, 100 do
-        local success = teleportToDoor(i)
-        if success then
-            print("Телепорт к двери " .. i)
-        else
-            print("Дверь " .. i .. " не найдена")
-        end
-        wait(1.5) -- пауза 1 секунда между телепортами
-    end
-    print("Автотелепорт завершён!")
 end)
 
 ------------------------------------------------
@@ -496,10 +582,4 @@ AddButton("Credit", "CREDIT", function()
 end)
 
 AddButton("Credit", "ROBANIK", function()
-end)
-
-AddButton("Credit", "AND", function()
-end)
-
-AddButton("Credit", "SOMBRITA_GAMESYT", function()
 end)
