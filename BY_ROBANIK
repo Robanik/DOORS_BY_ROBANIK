@@ -11,7 +11,7 @@ local VALID_KEYS = {
 }
 
 -- 🔗 Ссылка на получение ключа
-local GET_KEY_LINK = "https://discord.gg/sEHz2Ex7"
+local GET_KEY_LINK = "https://discord.gg/gDmCsSZS"
 
 local player = game.Players.LocalPlayer
 local ScreenGui = Instance.new("ScreenGui")
