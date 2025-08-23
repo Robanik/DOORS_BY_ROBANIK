@@ -3,8 +3,8 @@ local BUTTON_IMAGE_ID = "rbxassetid://107781958606208"
 
 -- 🔑 Ключи (можно добавить несколько)
 local VALID_KEYS = {
-    "DorsiusRR",
-    "DORSIUSRR",
+    "DoorsiusRR",
+    "DOORSIUSRR",
     "DoorsiusRR ",
     " DoorsiusRR",
     " DoorsiusRR ",
