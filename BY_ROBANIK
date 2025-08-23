@@ -82,7 +82,7 @@ HeaderLabel.BackgroundTransparency = 1
 HeaderLabel.TextColor3 = Color3.fromRGB(255,255,255)
 HeaderLabel.Font = Enum.Font.GothamBold
 HeaderLabel.TextSize = 16
-HeaderLabel.Text = "Создатель: Ты | Для игры: ExampleGame"
+HeaderLabel.Text = "BY ROBANIK | DOORS"
 
 -- Вкладки
 local TabScroll = Instance.new("ScrollingFrame")
