@@ -218,8 +218,20 @@ end)
 
 ------------------------------------------------
 
-AddSlider("Player", "WalkSpeed", 16, 50, 16, function(val)
-    player.Character.Humanoid.WalkSpeed = val
+AddButton("Player", "WalkSpeed 30", function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid.WalkSpeed = 30
+end)
+
+AddButton("Player", "WalkSpeed 16", function()
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+humanoid.WalkSpeed = 16
 end)
 
 ------------------------------------------------
