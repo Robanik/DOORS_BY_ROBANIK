@@ -448,6 +448,58 @@ task.spawn(function()
 end)
 end)
 
+AddButton("Esp", "Esp Lever", function()
+-- // ESP ДЛЯ LEVER (не связанный с ключами)
+-- Автор: твой скриптер 😎
+
+local Workspace = game:GetService("Workspace")
+
+-- Функция для создания ESP
+local function createBillboard(object, text, color)
+    if object:FindFirstChild("BillboardGui") then return end
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = object
+    billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+    billboard.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel")
+    label.Parent = billboard
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = color or Color3.fromRGB(255, 165, 0) -- оранжевый по умолчанию
+    label.TextStrokeTransparency = 0.2
+    label.TextSize = 20
+    label.Font = Enum.Font.FredokaOne
+
+    billboard.Parent = object
+end
+
+-- Новый ESP для LeverForGate.Main
+local function setupLeverESP()
+    if not Workspace:FindFirstChild("CurrentRooms") then return end
+
+    for i = 0, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room and room:FindFirstChild("Assets") then
+            local lever = room.Assets:FindFirstChild("LeverForGate")
+            if lever and lever:FindFirstChild("Main") then
+                createBillboard(lever.Main, "(Lever | "..i..")", Color3.fromRGB(255, 165, 0))
+            end
+        end
+    end
+end
+
+-- Обновление каждые 1 секунду
+task.spawn(function()
+    while true do
+        setupLeverESP()
+        task.wait(1)
+    end
+end)
+end)
+
 AddButton("Esp", "Esp Lock", function()
 -- // СТИЛЬНЫЙ ESP ДЛЯ LOCK
 -- Автор: твой скриптер 😎
