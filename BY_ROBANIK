@@ -348,7 +348,7 @@ local Workspace = game:GetService("Workspace")
 
 -- Функция для создания ESP
 local function createBillboard(object, text)
-    if object:FindFirstChild("BillboardGui") then return end -- избегаем дублирования
+    if object:FindFirstChild("BillboardGui") then return end
     local billboard = Instance.new("BillboardGui")
     billboard.Adornee = object
     billboard.Size = UDim2.new(0, 200, 0, 50)
@@ -381,13 +381,13 @@ local function setupKeyESP()
         end
     end
 
-    -- ✅ Остальные комнаты
-    for i = 1, 100 do
+    -- ✅ Остальные комнаты от 1 до 100
+    for i = 0, 100 do
         local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
         if room and room:FindFirstChild("Assets") then
             local assets = room.Assets
 
-            -- Вариант 1: Ключ в DrawerContainer
+            -- Вариант 1: Ключ в Table/DrawerContainer
             local drawer = assets:FindFirstChild("Table") and assets.Table:FindFirstChild("DrawerContainer")
             if drawer and drawer:FindFirstChild("KeyObtain") then
                 local keyHitbox = drawer.KeyObtain:FindFirstChild("Hitbox") and drawer.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
@@ -396,7 +396,7 @@ local function setupKeyESP()
                 end
             end
 
-            -- Вариант 2: Ключ прямо на столе
+            -- Вариант 2: Ключ на столе
             local tableObj = assets:FindFirstChild("Table")
             if tableObj and tableObj:FindFirstChild("KeyObtain") then
                 local keyHitbox2 = tableObj.KeyObtain:FindFirstChild("Hitbox") and tableObj.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
@@ -405,7 +405,7 @@ local function setupKeyESP()
                 end
             end
 
-            -- ✅ Вариант 3: Alternate Keys
+            -- Вариант 3: Alternate Keys
             local alternate = assets:FindFirstChild("Alternate")
             if alternate and alternate:FindFirstChild("Keys") then
                 for _, keyFolder in pairs(alternate.Keys:GetChildren()) do
@@ -415,6 +415,24 @@ local function setupKeyESP()
                             createBillboard(keyHitbox3, "(Alt Key | " .. i .. ")")
                         end
                     end
+                end
+            end
+
+            -- ✅ Вариант 4: Dresser.DrawerContainer
+            local dresser = assets:FindFirstChild("Dresser") and assets.Dresser:FindFirstChild("DrawerContainer")
+            if dresser and dresser:FindFirstChild("KeyObtain") then
+                local keyHitbox4 = dresser.KeyObtain:FindFirstChild("Hitbox") and dresser.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
+                if keyHitbox4 then
+                    createBillboard(keyHitbox4, "(Dresser Key | " .. i .. ")")
+                end
+            end
+
+            -- Вариант 5: Rolltop_Desk.DrawerContainer
+            local rolltop = assets:FindFirstChild("Rolltop_Desk") and assets.Rolltop_Desk:FindFirstChild("DrawerContainer")
+            if rolltop and rolltop:FindFirstChild("KeyObtain") then
+                local keyHitbox5 = rolltop.KeyObtain:FindFirstChild("Hitbox") and rolltop.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
+                if keyHitbox5 then
+                    createBillboard(keyHitbox5, "(Rolltop Key | " .. i .. ")")
                 end
             end
         end
