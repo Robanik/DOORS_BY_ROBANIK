@@ -382,8 +382,9 @@ local function setupKeyESP()
     end
 
     -- ✅ Остальные комнаты
-    for _, room in pairs(Workspace.CurrentRooms:GetChildren()) do
-        if room.Name ~= "0" and room:FindFirstChild("Assets") then
+    for i = 1, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room and room:FindFirstChild("Assets") then
             local assets = room.Assets
 
             -- Вариант 1: Ключ в DrawerContainer
@@ -391,7 +392,7 @@ local function setupKeyESP()
             if drawer and drawer:FindFirstChild("KeyObtain") then
                 local keyHitbox = drawer.KeyObtain:FindFirstChild("Hitbox") and drawer.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
                 if keyHitbox then
-                    createBillboard(keyHitbox, "(Key | " .. room.Name .. ")")
+                    createBillboard(keyHitbox, "(Key | " .. i .. ")")
                 end
             end
 
@@ -400,7 +401,20 @@ local function setupKeyESP()
             if tableObj and tableObj:FindFirstChild("KeyObtain") then
                 local keyHitbox2 = tableObj.KeyObtain:FindFirstChild("Hitbox") and tableObj.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
                 if keyHitbox2 then
-                    createBillboard(keyHitbox2, "(Key | " .. room.Name .. ")")
+                    createBillboard(keyHitbox2, "(Key | " .. i .. ")")
+                end
+            end
+
+            -- ✅ Вариант 3: Alternate Keys
+            local alternate = assets:FindFirstChild("Alternate")
+            if alternate and alternate:FindFirstChild("Keys") then
+                for _, keyFolder in pairs(alternate.Keys:GetChildren()) do
+                    if keyFolder:FindFirstChild("KeyObtain") and keyFolder.KeyObtain:FindFirstChild("Hitbox") then
+                        local keyHitbox3 = keyFolder.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
+                        if keyHitbox3 then
+                            createBillboard(keyHitbox3, "(Alt Key | " .. i .. ")")
+                        end
+                    end
                 end
             end
         end
