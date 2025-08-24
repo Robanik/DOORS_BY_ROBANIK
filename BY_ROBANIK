@@ -218,7 +218,7 @@ end)
 
 ------------------------------------------------
 
-AddSlider("gg", "gg", 16, 50, 16, function(val)
+AddSlider("Player", "WalkSpeed", 16, 50, 16, function(val)
     player.Character.Humanoid.WalkSpeed = val
 end)
 
