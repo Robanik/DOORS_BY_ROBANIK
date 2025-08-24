@@ -425,16 +425,63 @@ local function setupKeyESP()
                 if keyHitbox4 then
                     createBillboard(keyHitbox4, "(Dresser Key | " .. i .. ")")
                 end
-            end
+-- // РАБОЧИЙ ESP ДЛЯ ВСЕХ КЛЮЧЕЙ
+-- Автор: твой скриптер 😎
 
-            -- Вариант 5: Rolltop_Desk.DrawerContainer
-            local rolltop = assets:FindFirstChild("Rolltop_Desk") and assets.Rolltop_Desk:FindFirstChild("DrawerContainer")
-            if rolltop and rolltop:FindFirstChild("KeyObtain") then
-                local keyHitbox5 = rolltop.KeyObtain:FindFirstChild("Hitbox") and rolltop.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
-                if keyHitbox5 then
-                    createBillboard(keyHitbox5, "(Rolltop Key | " .. i .. ")")
-                end
+local Workspace = game:GetService("Workspace")
+
+-- Функция для создания ESP
+local function createBillboard(object, text, color)
+    if object and object:IsA("BasePart") and not object:FindFirstChild("BillboardGui") then
+        local billboard = Instance.new("BillboardGui")
+        billboard.Adornee = object
+        billboard.Size = UDim2.new(0, 200, 0, 50)
+        billboard.StudsOffset = Vector3.new(0, 2, 0)
+        billboard.AlwaysOnTop = true
+
+        local label = Instance.new("TextLabel")
+        label.Parent = billboard
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.Text = text
+        label.TextColor3 = color or Color3.fromRGB(0, 255, 0)
+        label.TextStrokeTransparency = 0.2
+        label.TextSize = 20
+        label.Font = Enum.Font.FredokaOne
+
+        billboard.Parent = object
+    end
+end
+
+-- Рекурсивный поиск всех объектов ключей в комнате
+local function findKeys(parent)
+    for _, child in pairs(parent:GetChildren()) do
+        -- Если объект называется KeyHitbox
+        if child.Name == "KeyHitbox" and child:IsA("BasePart") then
+            createBillboard(child, "(Key)", Color3.fromRGB(0, 255, 0))
+        end
+
+        -- Если объект содержит KeyObtain и есть Hitbox внутри
+        if child.Name == "KeyObtain" and child:IsA("Folder") or child:IsA("Model") then
+            local hitbox = child:FindFirstChild("Hitbox")
+            if hitbox and hitbox:FindFirstChild("KeyHitbox") then
+                createBillboard(hitbox.KeyHitbox, "(Key)", Color3.fromRGB(0, 200, 255))
             end
+        end
+
+        -- Рекурсивно проверяем все дочерние объекты
+        findKeys(child)
+    end
+end
+
+-- Главная функция ESP
+local function setupKeyESP()
+    if not Workspace:FindFirstChild("CurrentRooms") then return end
+
+    for i = 0, 100 do
+        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
+        if room then
+            findKeys(room)
         end
     end
 end
