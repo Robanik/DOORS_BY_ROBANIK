@@ -3,8 +3,8 @@ local BUTTON_IMAGE_ID = "rbxassetid://107781958606208"
 
 -- 🔑 Ключи (можно добавить несколько)
 local VALID_KEYS = {
-    "DorsiusRR",
-    "DORSIUSRR",
+    "DoorsiusRR",
+    "DOORSIUSRR",
     "DoorsiusRR ",
     " DoorsiusRR",
     " DoorsiusRR ",
@@ -218,20 +218,8 @@ end)
 
 ------------------------------------------------
 
-AddButton("Player", "SpeedWalk 30", function()
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
-humanoid.WalkSpeed = 30
-end)
-
-AddButton("Player", "SpeedWalk 16", function()
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
-humanoid.WalkSpeed = 16
+AddSlider("gg", "gg", 16, 50, 16, function(val)
+    player.Character.Humanoid.WalkSpeed = val
 end)
 
 ------------------------------------------------
