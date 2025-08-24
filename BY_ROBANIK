@@ -3,15 +3,15 @@ local BUTTON_IMAGE_ID = "rbxassetid://107781958606208"
 
 -- 🔑 Ключи (можно добавить несколько)
 local VALID_KEYS = {
-    "DoorsiusRR",
-    "DOORSIUSRR",
+    "DorsiusRR",
+    "DORSIUSRR",
     "DoorsiusRR ",
     " DoorsiusRR",
     " DoorsiusRR ",
 }
 
 -- 🔗 Ссылка на получение ключа
-local GET_KEY_LINK = "https://discord.gg/gDmCsSZS"
+local GET_KEY_LINK = "https://discord.gg/sEHz2Ex7"
 
 local player = game.Players.LocalPlayer
 local ScreenGui = Instance.new("ScreenGui")
@@ -82,7 +82,7 @@ HeaderLabel.BackgroundTransparency = 1
 HeaderLabel.TextColor3 = Color3.fromRGB(255,255,255)
 HeaderLabel.Font = Enum.Font.GothamBold
 HeaderLabel.TextSize = 16
-HeaderLabel.Text = "BY ROBANIK | DOORS"
+HeaderLabel.Text = "Создатель: Ты | Для игры: ExampleGame"
 
 -- Вкладки
 local TabScroll = Instance.new("ScrollingFrame")
@@ -208,6 +208,7 @@ end)
 AddTab("Home")
 AddTab("Player")
 AddTab("Esp")
+AddTab("Light")
 AddTab("Credit")
 
 ------------------------------------------------
@@ -340,13 +341,14 @@ end)
 end)
 
 AddButton("Esp", "Esp Key", function()
--- // СТИЛЬНЫЙ ESP ДЛЯ KEY (оба варианта)
+-- // СТИЛЬНЫЙ ESP ДЛЯ KEY (все варианты)
 -- Автор: твой скриптер 😎
 
 local Workspace = game:GetService("Workspace")
 
 -- Функция для создания ESP
 local function createBillboard(object, text)
+    if object:FindFirstChild("BillboardGui") then return end -- избегаем дублирования
     local billboard = Instance.new("BillboardGui")
     billboard.Adornee = object
     billboard.Size = UDim2.new(0, 200, 0, 50)
@@ -358,7 +360,7 @@ local function createBillboard(object, text)
     label.Size = UDim2.new(1, 0, 1, 0)
     label.BackgroundTransparency = 1
     label.Text = text
-    label.TextColor3 = Color3.fromRGB(0, 255, 0) -- зеленый (ключ)
+    label.TextColor3 = Color3.fromRGB(0, 255, 0)
     label.TextStrokeTransparency = 0.2
     label.TextSize = 20
     label.Font = Enum.Font.FredokaOne
@@ -368,36 +370,48 @@ end
 
 -- Проверка комнат
 local function setupKeyESP()
-    for i = 0, 100 do
-        local room = Workspace.CurrentRooms:FindFirstChild(tostring(i))
-        if room and room:FindFirstChild("Assets") then
+    if not Workspace:FindFirstChild("CurrentRooms") then return end
+
+    -- ✅ Вариант 0: конкретная комната 0
+    local room0 = Workspace.CurrentRooms:FindFirstChild("0")
+    if room0 and room0:FindFirstChild("Assets") then
+        local key0 = room0.Assets:FindFirstChild("KeyObtain")
+        if key0 and key0:FindFirstChild("Hitbox") and key0.Hitbox:FindFirstChild("KeyHitbox") then
+            createBillboard(key0.Hitbox.KeyHitbox, "(Key | 0)")
+        end
+    end
+
+    -- ✅ Остальные комнаты
+    for _, room in pairs(Workspace.CurrentRooms:GetChildren()) do
+        if room.Name ~= "0" and room:FindFirstChild("Assets") then
             local assets = room.Assets
 
-            -- ✅ Вариант 1: Ключ в DrawerContainer
+            -- Вариант 1: Ключ в DrawerContainer
             local drawer = assets:FindFirstChild("Table") and assets.Table:FindFirstChild("DrawerContainer")
             if drawer and drawer:FindFirstChild("KeyObtain") then
                 local keyHitbox = drawer.KeyObtain:FindFirstChild("Hitbox") and drawer.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
-                if keyHitbox and not keyHitbox:FindFirstChild("BillboardGui") then
-                    createBillboard(keyHitbox, "(Key | " .. i .. ")")
+                if keyHitbox then
+                    createBillboard(keyHitbox, "(Key | " .. room.Name .. ")")
                 end
             end
 
-            -- ✅ Вариант 2: Ключ прямо на столе
+            -- Вариант 2: Ключ прямо на столе
             local tableObj = assets:FindFirstChild("Table")
             if tableObj and tableObj:FindFirstChild("KeyObtain") then
                 local keyHitbox2 = tableObj.KeyObtain:FindFirstChild("Hitbox") and tableObj.KeyObtain.Hitbox:FindFirstChild("KeyHitbox")
-                if keyHitbox2 and not keyHitbox2:FindFirstChild("BillboardGui") then
-                    createBillboard(keyHitbox2, "(Key | " .. i .. ")")
+                if keyHitbox2 then
+                    createBillboard(keyHitbox2, "(Key | " .. room.Name .. ")")
                 end
             end
         end
     end
 end
 
--- Обновление каждые 3 секунды
+-- Обновление каждые 1 секунду
 task.spawn(function()
-    while task.wait(1) do
+    while true do
         setupKeyESP()
+        task.wait(1)
     end
 end)
 end)
@@ -578,8 +592,3 @@ end)
 
 ------------------------------------------------
 
-AddButton("Credit", "CREDIT", function()
-end)
-
-AddButton("Credit", "ROBANIK", function()
-end)
