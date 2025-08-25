@@ -209,6 +209,7 @@ AddTab("Home")
 AddTab("Player")
 AddTab("Esp")
 AddTab("Light")
+AddTab("Info")
 AddTab("Credit")
 
 ------------------------------------------------
@@ -634,6 +635,64 @@ Players.PlayerAdded:Connect(function(plr)
     if plr ~= LocalPlayer then
         createESP(plr)
     end
+end)
+end)
+
+------------------------------------------------
+
+AddButton("Info", "Rush", function()
+-- LocalScript
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Size = UDim2.new(1, 0, 0.1, 0) -- ширина = весь экран, высота = 10%
+TextLabel.Position = UDim2.new(0, 0, 0.9, 0) -- снизу экрана
+TextLabel.BackgroundTransparency = 1
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextStrokeTransparency = 0.2
+TextLabel.TextScaled = true
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.Visible = false
+TextLabel.Parent = ScreenGui
+
+-- функция показа текста
+local function ShowRushWarning()
+	TextLabel.Text = "⚠️ Раш идёт!"
+	TextLabel.Visible = true
+	game:GetService("TweenService"):Create(
+		TextLabel,
+		TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{TextTransparency = 0}
+	):Play()
+end
+
+-- функция скрытия текста
+local function HideRushWarning()
+	game:GetService("TweenService"):Create(
+		TextLabel,
+		TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+		{TextTransparency = 1}
+	):Play()
+	wait(0.5)
+	TextLabel.Visible = false
+end
+
+-- отслеживаем Rush
+local RushFolder = game.Workspace:WaitForChild("RushMoving")
+
+RushFolder.ChildAdded:Connect(function(child)
+	if child.Name == "RushNew" then
+		ShowRushWarning()
+		child.AncestryChanged:Connect(function(_, parent)
+			if not parent then
+				HideRushWarning()
+			end
+		end)
+	end
 end)
 end)
 
