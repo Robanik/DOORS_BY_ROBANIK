@@ -640,60 +640,66 @@ end)
 
 ------------------------------------------------
 
-AddButton("Info", "Rush", function()
--- LocalScript
+AddButton("Info", "Rush and ambush", function()
+-- LocalScript (StarterGui или StarterPlayerScripts)
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local workspace = game:GetService("Workspace")
+
+-- GUI
 local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "EntityWarnings"
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
 local TextLabel = Instance.new("TextLabel")
-TextLabel.Size = UDim2.new(1, 0, 0.1, 0) -- ширина = весь экран, высота = 10%
-TextLabel.Position = UDim2.new(0, 0, 0.9, 0) -- снизу экрана
+TextLabel.Size = UDim2.new(1, 0, 0.1, 0)
+TextLabel.Position = UDim2.new(0, 0, 0.9, 0)
 TextLabel.BackgroundTransparency = 1
 TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 TextLabel.TextStrokeTransparency = 0.2
+TextLabel.TextTransparency = 1
 TextLabel.TextScaled = true
 TextLabel.Font = Enum.Font.GothamBold
 TextLabel.Visible = false
 TextLabel.Parent = ScreenGui
 
--- функция показа текста
-local function ShowRushWarning()
-	TextLabel.Text = "⚠️ Раш идёт!"
-	TextLabel.Visible = true
-	game:GetService("TweenService"):Create(
-		TextLabel,
-		TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-		{TextTransparency = 0}
-	):Play()
+-- показать текст
+local function ShowWarning(text)
+	TextLabel.Text = text
+	if not TextLabel.Visible then
+		TextLabel.Visible = true
+		TweenService:Create(TextLabel, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+	end
 end
 
--- функция скрытия текста
-local function HideRushWarning()
-	game:GetService("TweenService"):Create(
-		TextLabel,
-		TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-		{TextTransparency = 1}
-	):Play()
-	wait(0.5)
+-- скрыть текст
+local function HideWarning()
+	TweenService:Create(TextLabel, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
+	task.wait(0.5)
 	TextLabel.Visible = false
 end
 
--- отслеживаем Rush
-local RushFolder = game.Workspace:WaitForChild("RushMoving")
+-- проверка сущностей
+local function CheckEntities()
+	local rush = workspace:FindFirstChild("RushMoving") and workspace.RushMoving:FindFirstChild("RushNew")
+	local ambush = workspace:FindFirstChild("AmbushMoving") and workspace.AmbushMoving:FindFirstChild("AmbushNew")
 
-RushFolder.ChildAdded:Connect(function(child)
-	if child.Name == "RushNew" then
-		ShowRushWarning()
-		child.AncestryChanged:Connect(function(_, parent)
-			if not parent then
-				HideRushWarning()
-			end
-		end)
+	if rush then
+		ShowWarning("⚠️ Раш идёт!")
+	elseif ambush then
+		ShowWarning("⚠️ Амбуш идёт!")
+	else
+		HideWarning()
 	end
-end)
+end
+
+-- авто-проверка каждую секунду
+while true do
+	CheckEntities()
+	task.wait(1) -- проверяем каждые 1 секунду
+end
 end)
 
 ------------------------------------------------
