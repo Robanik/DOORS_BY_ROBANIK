@@ -208,6 +208,7 @@ end)
 AddTab("Home")
 AddTab("Player")
 AddTab("Esp")
+AddTab("Esp Entity")
 AddTab("Light")
 AddTab("Info")
 AddTab("Credit")
@@ -636,6 +637,71 @@ Players.PlayerAdded:Connect(function(plr)
         createESP(plr)
     end
 end)
+end)
+
+------------------------------------------------
+
+AddButton("Esp Entity", "Rush And Ambush", function()
+-- LocalScript (StarterPlayerScripts)
+
+local workspace = game:GetService("Workspace")
+
+-- Функция для создания ESP-текста
+local function ApplyTextESP(model, text, color)
+	if model and not model:FindFirstChild("ESP_Billboard") then
+		local billboard = Instance.new("BillboardGui")
+		billboard.Name = "ESP_Billboard"
+		billboard.Size = UDim2.new(0, 200, 0, 50)
+		billboard.AlwaysOnTop = true
+		billboard.Adornee = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+		billboard.StudsOffset = Vector3.new(0, 5, 0) -- высота текста над моделью
+		billboard.Parent = model
+
+		local label = Instance.new("TextLabel")
+		label.Size = UDim2.new(1, 0, 1, 0)
+		label.BackgroundTransparency = 1
+		label.Text = text
+		label.TextColor3 = color
+		label.TextScaled = true
+		label.Font = Enum.Font.GothamBold
+		label.Parent = billboard
+	end
+end
+
+-- Удалить ESP
+local function RemoveTextESP(model)
+	if model and model:FindFirstChild("ESP_Billboard") then
+		model.ESP_Billboard:Destroy()
+	end
+end
+
+-- Проверка сущностей
+local function CheckEntities()
+	local rush = workspace:FindFirstChild("RushMoving") and workspace.RushMoving:FindFirstChild("RushNew")
+	local ambush = workspace:FindFirstChild("AmbushMoving") and workspace.AmbushMoving:FindFirstChild("AmbushNew")
+
+	if rush then
+		ApplyTextESP(rush, "(RUSH)", Color3.fromRGB(255, 0, 0))
+	else
+		if workspace:FindFirstChild("RushMoving") then
+			RemoveTextESP(workspace.RushMoving:FindFirstChild("RushNew"))
+		end
+	end
+
+	if ambush then
+		ApplyTextESP(ambush, "(AMBUSH)", Color3.fromRGB(0, 255, 0))
+	else
+		if workspace:FindFirstChild("AmbushMoving") then
+			RemoveTextESP(workspace.AmbushMoving:FindFirstChild("AmbushNew"))
+		end
+	end
+end
+
+-- Авто-проверка каждую секунду
+while true do
+	CheckEntities()
+	task.wait(1)
+end
 end)
 
 ------------------------------------------------
