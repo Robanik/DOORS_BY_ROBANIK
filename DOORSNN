@@ -515,3 +515,315 @@ task.spawn(function()
     end
 end)
 end)
+
+AddButton("Esp", "Esp Players", function()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+
+local BoxColor = Color3.fromRGB(0, 255, 0)
+
+-- Создание Drawing объекта
+local function createDrawing(type, props)
+    local obj = Drawing.new(type)
+    for i, v in pairs(props) do
+        obj[i] = v
+    end
+    return obj
+end
+
+-- ESP для игрока
+local function createESP(player)
+    local box = createDrawing("Square", {
+        Thickness = 1.5,
+        Color = BoxColor,
+        Filled = false,
+        Visible = false
+    })
+
+    local tracer = createDrawing("Line", {
+        Thickness = 1.5,
+        Color = BoxColor,
+        Visible = false
+    })
+
+    local nameText = createDrawing("Text", {
+        Size = 14,
+        Center = true,
+        Outline = true,
+        Color = Color3.fromRGB(0, 255, 0),
+        Visible = false
+    })
+
+    local hpText = createDrawing("Text", {
+        Size = 13,
+        Center = true,
+        Outline = true,
+        Color = Color3.fromRGB(255, 0, 0),
+        Visible = false
+    })
+
+    RunService.RenderStepped:Connect(function()
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local root = player.Character.HumanoidRootPart
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                -- Позиции головы и ног
+                local head = player.Character:FindFirstChild("Head")
+                if head then
+                    local headPos, headVisible = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                    local legPos, legVisible = Camera:WorldToViewportPoint(root.Position - Vector3.new(0, 3, 0))
+
+                    if headVisible or legVisible then
+                        local boxHeight = math.abs(headPos.Y - legPos.Y)
+                        local boxWidth = boxHeight / 2
+                        local boxX = headPos.X - boxWidth / 2
+                        local boxY = headPos.Y
+
+                        -- Бокс
+                        box.Visible = true
+                        box.Size = Vector2.new(boxWidth, boxHeight)
+                        box.Position = Vector2.new(boxX, boxY)
+                        box.Color = BoxColor
+
+                        -- Ник
+                        nameText.Visible = true
+                        nameText.Text = player.Name
+                        nameText.Position = Vector2.new(headPos.X, headPos.Y - 15)
+
+                        -- HP
+                        hpText.Visible = true
+                        hpText.Text = string.format("HP: %d", math.floor(humanoid.Health))
+                        hpText.Position = Vector2.new(headPos.X, legPos.Y + 5)
+
+                        -- Линия (tracer)
+                        tracer.Visible = true
+                        tracer.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y) -- низ экрана
+                        tracer.To = Vector2.new(root.Position.X, root.Position.Y)
+                        tracer.To = Vector2.new((headPos.X + (headPos.X + boxWidth)) / 2, legPos.Y) -- центр бокса
+                        tracer.Color = BoxColor
+                    else
+                        box.Visible = false
+                        tracer.Visible = false
+                        nameText.Visible = false
+                        hpText.Visible = false
+                    end
+                end
+            else
+                box.Visible = false
+                tracer.Visible = false
+                nameText.Visible = false
+                hpText.Visible = false
+            end
+        else
+            box.Visible = false
+            tracer.Visible = false
+            nameText.Visible = false
+            hpText.Visible = false
+        end
+    end)
+end
+
+-- Подключаем ESP ко всем игрокам
+for _, plr in pairs(Players:GetPlayers()) do
+    if plr ~= LocalPlayer then
+        createESP(plr)
+    end
+end
+
+Players.PlayerAdded:Connect(function(plr)
+    if plr ~= LocalPlayer then
+        createESP(plr)
+    end
+end)
+end)
+
+------------------------------------------------
+
+AddButton("Esp Entity", "Rush And Ambush", function()
+-- LocalScript (StarterPlayerScripts)
+
+local workspace = game:GetService("Workspace")
+
+-- Функция для создания ESP-текста
+local function ApplyTextESP(model, text, color)
+	if model and not model:FindFirstChild("ESP_Billboard") then
+		local billboard = Instance.new("BillboardGui")
+		billboard.Name = "ESP_Billboard"
+		billboard.Size = UDim2.new(0, 200, 0, 50)
+		billboard.AlwaysOnTop = true
+		billboard.Adornee = model:FindFirstChild("HumanoidRootPart") or model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+		billboard.StudsOffset = Vector3.new(0, 5, 0) -- высота текста над моделью
+		billboard.Parent = model
+
+		local label = Instance.new("TextLabel")
+		label.Size = UDim2.new(1, 0, 1, 0)
+		label.BackgroundTransparency = 1
+		label.Text = text
+		label.TextColor3 = color
+		label.TextScaled = true
+		label.Font = Enum.Font.GothamBold
+		label.Parent = billboard
+	end
+end
+
+-- Удалить ESP
+local function RemoveTextESP(model)
+	if model and model:FindFirstChild("ESP_Billboard") then
+		model.ESP_Billboard:Destroy()
+	end
+end
+
+-- Проверка сущностей
+local function CheckEntities()
+	local rush = workspace:FindFirstChild("RushMoving") and workspace.RushMoving:FindFirstChild("RushNew")
+	local ambush = workspace:FindFirstChild("AmbushMoving") and workspace.AmbushMoving:FindFirstChild("AmbushNew")
+
+	if rush then
+		ApplyTextESP(rush, "(RUSH)", Color3.fromRGB(255, 0, 0))
+	else
+		if workspace:FindFirstChild("RushMoving") then
+			RemoveTextESP(workspace.RushMoving:FindFirstChild("RushNew"))
+		end
+	end
+
+	if ambush then
+		ApplyTextESP(ambush, "(AMBUSH)", Color3.fromRGB(0, 255, 0))
+	else
+		if workspace:FindFirstChild("AmbushMoving") then
+			RemoveTextESP(workspace.AmbushMoving:FindFirstChild("AmbushNew"))
+		end
+	end
+end
+
+-- Авто-проверка каждую секунду
+while true do
+	CheckEntities()
+	task.wait(1)
+end
+end)
+
+------------------------------------------------
+
+AddButton("Info", "Rush and ambush", function()
+-- LocalScript (StarterGui или StarterPlayerScripts)
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local workspace = game:GetService("Workspace")
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "EntityWarnings"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Size = UDim2.new(1, 0, 0.1, 0)
+TextLabel.Position = UDim2.new(0, 0, 0.9, 0)
+TextLabel.BackgroundTransparency = 1
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextStrokeTransparency = 0.2
+TextLabel.TextTransparency = 1
+TextLabel.TextScaled = true
+TextLabel.Font = Enum.Font.GothamBold
+TextLabel.Visible = false
+TextLabel.Parent = ScreenGui
+
+-- показать текст
+local function ShowWarning(text)
+	TextLabel.Text = text
+	if not TextLabel.Visible then
+		TextLabel.Visible = true
+		TweenService:Create(TextLabel, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+	end
+end
+
+-- скрыть текст
+local function HideWarning()
+	TweenService:Create(TextLabel, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
+	task.wait(0.5)
+	TextLabel.Visible = false
+end
+
+-- проверка сущностей
+local function CheckEntities()
+	local rush = workspace:FindFirstChild("RushMoving") and workspace.RushMoving:FindFirstChild("RushNew")
+	local ambush = workspace:FindFirstChild("AmbushMoving") and workspace.AmbushMoving:FindFirstChild("AmbushNew")
+
+	if rush then
+		ShowWarning("⚠️ Раш идёт!")
+	elseif ambush then
+		ShowWarning("⚠️ Амбуш идёт!")
+	else
+		HideWarning()
+	end
+end
+
+-- авто-проверка каждую секунду
+while true do
+	CheckEntities()
+	task.wait(1) -- проверяем каждые 1 секунду
+end
+end)
+
+------------------------------------------------
+
+AddButton("Light", "FullBright", function()
+-- // FULLBRIGHT
+-- Автор: твой скриптер 😎
+
+local Lighting = game:GetService("Lighting")
+
+local function enableFullBright()
+    -- Сохраняем старые настройки (на случай отключения)
+    if not Lighting:FindFirstChild("OriginalSettings") then
+        local folder = Instance.new("Folder")
+        folder.Name = "OriginalSettings"
+        folder.Parent = Lighting
+
+        local ambient = Instance.new("Color3Value")
+        ambient.Name = "Ambient"
+        ambient.Value = Lighting.Ambient
+        ambient.Parent = folder
+
+        local brightness = Instance.new("NumberValue")
+        brightness.Name = "Brightness"
+        brightness.Value = Lighting.Brightness
+        brightness.Parent = folder
+
+        local outdoor = Instance.new("Color3Value")
+        outdoor.Name = "OutdoorAmbient"
+        outdoor.Value = Lighting.OutdoorAmbient
+        outdoor.Parent = folder
+    end
+
+    -- Включаем FullBright
+    Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+    Lighting.Brightness = 2
+    Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 255)
+end
+
+local function disableFullBright()
+    local folder = Lighting:FindFirstChild("OriginalSettings")
+    if folder then
+        Lighting.Ambient = folder.Ambient.Value
+        Lighting.Brightness = folder.Brightness.Value
+        Lighting.OutdoorAmbient = folder.OutdoorAmbient.Value
+        folder:Destroy()
+    end
+end
+
+-- Пример использования
+enableFullBright() -- включить FullBright
+-- disableFullBright() -- отключить и вернуть старые настройки
+end)
+
+------------------------------------------------
+
+AddButton("Credit", "CREDIT", function()
+end)
+
+AddButton("Credit", "ROBANIK", function()
+end)
